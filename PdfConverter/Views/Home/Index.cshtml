@@ -1,0 +1,46 @@
+﻿@model PdfConverter.Models.FileUploadModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<form asp-controller="Home" asp-action="" enctype="multipart/form-data" method="post">
+    <label for="uploadedFile"></label>
+    <input type="file" name="uploadedFile" accept=".pdf" required />
+    <br />
+    <input asp-for="ParseImages" type="checkbox" id="ParseImages" name="ParseImages" />
+    <label for="ParseImages">Convert images to text as well</label>
+    <br />
+    <input type="submit" value="Upload" />
+</form>
+
+<br />
+
+@if (ViewBag.FileContent != null)
+{
+    <div class="container">
+        <textarea id="textBox">@ViewBag.FileContent</textarea>
+        <br>
+        <button onclick="downloadText('@(ViewBag.FileName)')">Download</button>
+    </div>
+}
+
+<script>
+    function downloadText(fileName) {
+        const textBox = document.getElementById("textBox");
+        const text = textBox.value;
+
+        if (text.trim() === "") {
+            alert("Please enter some text before downloading.");
+            return;
+        }
+
+        const element = document.createElement("a");
+        element.href = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
+        element.download = fileName;
+
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+</script>
